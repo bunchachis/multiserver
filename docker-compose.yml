@@ -1,0 +1,28 @@
+services:
+  http-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs:ro
+      - ./proxy-custom.conf:/etc/nginx/conf.d/proxy-custom.conf
+    environment:
+      DEFAULT_HOST: ${STUB_HOSTNAME}
+    restart: always
+
+  stub:
+    image: nginx:alpine
+    volumes:
+      - ./stub/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./stub/index.html:/app/index.html
+    environment:
+      VIRTUAL_HOST: ${STUB_HOSTNAME}
+      HTTPS_METHOD: noredirect
+
+networks:
+  default:
+    external: true
+    name: multiserver
