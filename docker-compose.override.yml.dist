@@ -1,0 +1,18 @@
+services:
+  # SMTP stub with Web GUI
+  mailcatcher:
+    image: dockage/mailcatcher
+    environment:
+      - VIRTUAL_HOST=mailcatcher
+      - VIRTUAL_PORT=1080
+    networks:
+      default: ~
+      backend:
+        aliases:
+          - mailcatcher
+    restart: always
+
+networks:
+  backend: # for internal purposes
+    external: true
+    name: multiserver_backend
